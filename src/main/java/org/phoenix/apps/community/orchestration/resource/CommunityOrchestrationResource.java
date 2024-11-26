@@ -36,13 +36,13 @@ public class CommunityOrchestrationResource {
     }
 
     @GetMapping("/community/{communityId}/posts")
-    public ResponseEntity<List<Post>> getAllPostsForCommunity(@PathVariable String communityId) {
+    public ResponseEntity<List<Post>> getAllPostsForCommunity(@PathVariable int communityId) {
         List<Post> response = this.communityOrchestrationService.getAllPostsForCommunity(communityId);
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/group/{groupId}/posts")
-    public ResponseEntity<List<Post>> getAllPostsForGroup(@PathVariable String groupId) {
+    public ResponseEntity<List<Post>> getAllPostsForGroup(@PathVariable int groupId) {
         List<Post> response = this.communityOrchestrationService.getAllPostsForGroup(groupId);
         return ResponseEntity.ok().body(response);
     }

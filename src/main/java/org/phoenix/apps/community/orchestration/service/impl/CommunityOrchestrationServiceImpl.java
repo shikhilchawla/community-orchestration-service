@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommunityOrchestrationServiceImpl implements CommunityOrchestrationService {
@@ -32,6 +33,8 @@ public class CommunityOrchestrationServiceImpl implements CommunityOrchestration
     private String addCommentPath;
     @Value("${user.comment.service.updateComment.path}")
     private String updateCommentPath;
+    @Value("${user.comment.service.getCommentsByPostId.path}")
+    private String getCommentsByPostIdPath;
 
     private final WebClient.Builder webClientBuilder;
 
@@ -58,7 +61,7 @@ public class CommunityOrchestrationServiceImpl implements CommunityOrchestration
     @Override
     public Post updatePost(Post post) {
         try {
-            return webClientBuilder.build()
+            Post result = webClientBuilder.build()
                     .put()
                     .uri(new URI(postServiceUrl + updatePostPath))
                     .header("Authorization", "Bearer MY_SECRET_TOKEN")
@@ -66,6 +69,9 @@ public class CommunityOrchestrationServiceImpl implements CommunityOrchestration
                     .retrieve()
                     .bodyToMono(Post.class)
                     .block();
+            if (result != null)
+                result.setComments(getCommentsByPostId(result.getPostId()));
+            return result;
         }
         catch (Exception e) {
             throw new RuntimeException(e);
@@ -117,28 +123,37 @@ public class CommunityOrchestrationServiceImpl implements CommunityOrchestration
     }
 
     @Override
-    public List<Post> getAllPostsForCommunity(String communityId) {
+    public List<Post> getAllPostsForCommunity(int communityId) {
         try {
-            return webClientBuilder.build()
+            List<Post> results = webClientBuilder.build()
                     .get()
                     .uri(new URI(postServiceUrl + getCommunityPostsPath + communityId))
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<List<Post>>() {})
                     .block();
+
+            assert results != null;
+            return results.stream()
+                    .peek(post -> post.setComments(getCommentsByPostId(post.getPostId()))
+            ).toList();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public List<Post> getAllPostsForGroup(String groupId) {
+    public List<Post> getAllPostsForGroup(int groupId) {
         try {
-            return webClientBuilder.build()
+            List<Post> results = webClientBuilder.build()
                     .get()
                     .uri(new URI(postServiceUrl + getGroupPostsPath + groupId))
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<List<Post>>() {})
                     .block();
+            assert results != null;
+            return results.stream()
+                    .peek(post -> post.setComments(getCommentsByPostId(post.getPostId()))
+                    ).toList();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -151,6 +166,21 @@ public class CommunityOrchestrationServiceImpl implements CommunityOrchestration
                     .delete()
                     .uri(new URI(commentServiceURL + addCommentPath + "/" + commentId))
                     .retrieve().bodyToMono(String.class)
+                    .block();
+        }
+        catch (Exception e){
+            throw new RuntimeException();
+        }
+    }
+
+    private List<Comment> getCommentsByPostId(int postId) {
+        try {
+            return webClientBuilder.build()
+                    .get()
+                    .uri(new URI(commentServiceURL + getCommentsByPostIdPath + postId))
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<List<Comment>>() {
+                    })
                     .block();
         }
         catch (Exception e){

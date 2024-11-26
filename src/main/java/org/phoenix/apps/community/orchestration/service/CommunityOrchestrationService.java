@@ -21,9 +21,9 @@ public interface CommunityOrchestrationService {
 
     Group addCommunityGroup(Group group);
 
-    List<Post> getAllPostsForCommunity(String communityId);
+    List<Post> getAllPostsForCommunity(int communityId);
 
-    List<Post> getAllPostsForGroup(String groupId);
+    List<Post> getAllPostsForGroup(int groupId);
 
     void deletPostComment(int commentId);
 }
