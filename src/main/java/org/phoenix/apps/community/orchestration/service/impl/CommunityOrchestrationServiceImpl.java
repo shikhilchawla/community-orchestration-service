@@ -13,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CommunityOrchestrationServiceImpl implements CommunityOrchestrationService {
@@ -35,11 +34,21 @@ public class CommunityOrchestrationServiceImpl implements CommunityOrchestration
     private String updateCommentPath;
     @Value("${user.comment.service.getCommentsByPostId.path}")
     private String getCommentsByPostIdPath;
+    @Value("${community.service.url}")
+    private String communityServiceURL;
+    @Value("${community.service.addCommunity.path}")
+    private String addCommunityPath;
+    @Value("${group.service.addGroup.path}")
+    private String addGroupPath;
+    @Value("${group.service.getGroups.path}")
+    private String getGroupsPath;
 
     private final WebClient.Builder webClientBuilder;
+    private final WebClient myWebClient;
 
-    public CommunityOrchestrationServiceImpl(WebClient.Builder webClientBuilder) {
+    public CommunityOrchestrationServiceImpl(WebClient.Builder webClientBuilder, WebClient myWebClient) {
         this.webClientBuilder = webClientBuilder;
+        this.myWebClient = myWebClient;
     }
 
     @Override
@@ -78,8 +87,6 @@ public class CommunityOrchestrationServiceImpl implements CommunityOrchestration
         }
     }
 
-
-
     @Override
     public Comment addPostComments(Comment comment) {
         try {
@@ -114,12 +121,34 @@ public class CommunityOrchestrationServiceImpl implements CommunityOrchestration
 
     @Override
     public Community addCommunity(Community community) {
-        return null;
+        try {
+            return webClientBuilder.build()
+                    .post()
+                    .uri(new URI(communityServiceURL + addCommunityPath))
+                    .bodyValue(community)
+                    .retrieve()
+                    .bodyToMono(Community.class)
+                    .block();
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public Group addCommunityGroup(Group group) {
-        return null;
+        try {
+            return myWebClient
+                    .post()
+                    .uri(new URI(communityServiceURL + addGroupPath))
+                    .bodyValue(group)
+                    .retrieve()
+                    .bodyToMono(Group.class)
+                    .block();
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -170,6 +199,20 @@ public class CommunityOrchestrationServiceImpl implements CommunityOrchestration
         }
         catch (Exception e){
             throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public List<Group> getAllGroupsForCommunity(int communityId) {
+        try {
+            List<Group> groups = myWebClient.get()
+                    .uri(new URI(communityServiceURL + getGroupsPath + communityId))
+                    .retrieve().bodyToMono(new ParameterizedTypeReference<List<Group>>() {})
+                    .block();
+            return groups;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

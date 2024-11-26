@@ -26,4 +26,6 @@ public interface CommunityOrchestrationService {
     List<Post> getAllPostsForGroup(int groupId);
 
     void deletPostComment(int commentId);
+
+    List<Group> getAllGroupsForCommunity(int communityId);
 }

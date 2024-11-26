@@ -1,6 +1,8 @@
 package org.phoenix.apps.community.orchestration.resource;
 
 import org.phoenix.apps.community.orchestration.model.Comment;
+import org.phoenix.apps.community.orchestration.model.Community;
+import org.phoenix.apps.community.orchestration.model.Group;
 import org.phoenix.apps.community.orchestration.model.Post;
 import org.phoenix.apps.community.orchestration.service.CommunityOrchestrationService;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +25,25 @@ public class CommunityOrchestrationResource {
         return ResponseEntity.ok("Orchestration service is healthy.");
     }
 
+    @PostMapping
+    public ResponseEntity<Community> addNewCommunity(@RequestBody Community community) {
+        return ResponseEntity.ok().body(this.communityOrchestrationService.addCommunity(community));
+    }
+
+    @PostMapping("/groups")
+    public ResponseEntity<Group> addNewGroup(@RequestBody Group group) {
+        return ResponseEntity.ok().body(this.communityOrchestrationService.addCommunityGroup(group));
+    }
+
     @PostMapping("/posts")
     public ResponseEntity<Post> addNewPost(@RequestBody Post request) {
         Post response = this.communityOrchestrationService.addNewPost(request);
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/{communityId}")
+    public ResponseEntity<List<Group>> getCommunityDetailsById(int communityId) {
+        return ResponseEntity.ok().body(this.communityOrchestrationService.getAllGroupsForCommunity(communityId));
     }
 
     @PutMapping("/posts")

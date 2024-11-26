@@ -13,4 +13,9 @@ public class CommunityAppHttpClient {
     public WebClient.Builder getBlockingWebClient() {
         return WebClient.builder();
     }
+
+    @Bean
+    public WebClient getWebClient() {
+        return WebClient.builder().build();
+    }
 }
