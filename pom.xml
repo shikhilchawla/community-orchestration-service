@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.phoenix.apps</groupId>
-    <artifactId>UserPostsService</artifactId>
+    <artifactId>CommunityOrchestrationService</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>UserPostsService</name>
+    <name>CommunityOrchestrationService</name>
     <description>Demo project for Spring Boot</description>
     <url/>
     <licenses>
@@ -39,10 +39,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>io.netty</groupId>-->
 <!--            <artifactId>netty-resolver-dns-native-macos</artifactId>-->
