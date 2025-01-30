@@ -55,8 +55,8 @@ static_resources:
                   virtual_hosts:
                     - name: community_mgmt_svc
                       domains:
-                        - "localhost:57338"
-                        - "localhost:57338/*"
+                        - "localhost:31000"
+                        - "localhost:31000/*"
                       retry_policy:
                         retry_on: 5xx
                         num_retries: 2
@@ -96,7 +96,7 @@ static_resources:
                   address:
                     socket_address:
                       address: localhost
-                      port_value: 57338
+                      port_value: 31000
 
 admin:
   access_log_path: "/dev/stdout"
